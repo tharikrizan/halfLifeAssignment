@@ -5,6 +5,10 @@ const subStationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  type: {
+    type: String,
+    required: true,
+  },
 
   assigned: {
     type: Boolean,
