@@ -1,60 +1,50 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
+    <v-app-bar app color="primary" dark>
+      <div class="d-flex align-center"></div>
+      <v-tabs v-if="$vuetify.breakpoint.mdAndUp" centered>
+        <v-tab exact to="/">Add Booking</v-tab>
+        <v-tab exact to="/about">View Bookings</v-tab>
+      </v-tabs>
       <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
     </v-app-bar>
 
-    <v-main>
-      <HelloWorld/>
-    </v-main>
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="6" md="4" sm="12">
+          <v-main class="flex align-center ">
+            <router-view />
+          </v-main>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
-
+import { mapActions, mapState } from "vuex";
 export default {
-  name: 'App',
-
-  components: {
-    HelloWorld,
-  },
+  name: "App",
 
   data: () => ({
-    //
+    bookingList: [],
   }),
+  methods: {
+    ...mapActions(["getBookingsAction"]),
+  },
+  computed: {
+    ...mapState(["bookings"]),
+  },
+  watch: {
+    // whenever question changes, this function will run
+    bookings: function() {
+      this.getBookingsActions();
+      this.bookingList = this.bookings;
+    },
+  },
+  created() {
+    this.getBookingsActions();
+    this.bookingList = this.bookings;
+  },
 };
 </script>
