@@ -37,16 +37,20 @@ exports.addBooking = async (req, res, next) => {
         message: "Bookings Full",
       });
     }
-    //if heavy vehicle , check availabilty
+    //if heavy vehicle , check availabilty , and assign particular substation accordingly
+    // I added 10 substations manually to the database
     let subStation = "";
     if (req.body.vehicleType === "heavy") {
       subStation = await SubStations.findOne({
         assigned: false,
         type: "heavy",
       });
+    } else {
+      subStation = await SubStations.findOne({
+        assigned: false,
+        type: "light",
+      });
     }
-    // assign available substation
-    // I added 10 substations manually to the database
 
     //assign available staff
     // I added 10 staff members manually to the database
@@ -58,6 +62,13 @@ exports.addBooking = async (req, res, next) => {
       assignedSubStation: subStation.name,
       assignedStaff: staff.name,
     });
+
+    //update staff and substation as assigned is true
+    await SubStations.findOneAndUpdate(
+      { _id: subStation._id },
+      { assigned: true }
+    );
+    await Staff.findOneAndUpdate({ _id: staff._id }, { assigned: true });
 
     const newBooking = await booking.save();
 
@@ -75,10 +86,12 @@ exports.addBooking = async (req, res, next) => {
 };
 
 //@desc Clear all bookings end of the day and unassign all substations and staff members
-//@route Delete api/bookings/
-//@ access public
+//this is not a route
+//called end of the day
 
-exports.deleteBookings = async (req, res, next) => {
+exports.deleteBookings = async () => {
+  console.log("I am called at 21:00");
+
   try {
     const bookings = await Booking.find();
     const staff = await Staff.find();
@@ -102,16 +115,16 @@ exports.deleteBookings = async (req, res, next) => {
       });
     }
 
-    return res.status(200).json({
+    return {
       success: true,
       deleteCount,
       message:
         "Emptied Bookings and unassigned substations and staff for the day",
-    });
+    };
   } catch (error) {
-    res.status(500).json({
+    return {
       success: false,
       message: "server error",
-    });
+    };
   }
 };

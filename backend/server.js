@@ -2,8 +2,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const schedule = require("node-schedule");
 
 const bookingsRoutes = require("./routes/booking");
+const { deleteBookings } = require("./controllers/booking");
 
 require("dotenv").config();
 
@@ -22,10 +24,18 @@ mongoose
     useCreateIndex: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("DB Connected"));
+  .then(() => console.log("DB  Connected"))
+  .catch((err) => console.log("something wrong in mongo db connection", err));
 
 //route middleware
 app.use("/api/bookings", bookingsRoutes);
+
+// clear booking at the end of the day , every day at 20:00 clear all booking
+
+let job = schedule.scheduleJob({ hour: 20, minute: 0 }, async function() {
+  console.log("Hello i am running!");
+  await deleteBookings();
+});
 
 app.listen(port, (err) => {
   if (err) {
