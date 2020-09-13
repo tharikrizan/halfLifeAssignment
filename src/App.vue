@@ -10,8 +10,8 @@
     </v-app-bar>
 
     <v-container>
-      <v-row justify="start" wrap>
-        <v-col cols="4" md="6" sm="12">
+      <v-row justify="center" wrap>
+        <v-col cols="12">
           <v-main>
             <router-view />
           </v-main>

@@ -1,11 +1,20 @@
 <template>
-  <div class="about">
+  <div>
     <h1>Bookings page</h1>
-    <BookedCard />
-    <BookedCard />
-    <BookedCard />
-    <BookedCard />
-    <BookedCard />
+    <div>
+      <v-container>
+        <v-row justify="start" wrap>
+          <v-col cols="4" md="6" sm="12">
+            <BookedCard
+              v-for="(booking, i) in bookings"
+              :key="i"
+              :booking="booking"
+              :id="i"
+            />
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
   </div>
 </template>
 <script>
@@ -26,15 +35,9 @@ export default {
   computed: {
     ...mapState(["bookings"]),
   },
-  watch: {
-    // whenever question changes, this function will run
-    bookings: function () {
-      this.getBookingsActions();
-      this.bookingList = this.bookings;
-    },
-  },
+
   created() {
-    this.getBookingsActions();
+    this.getBookingsAction();
     this.bookingList = this.bookings;
   },
 };
