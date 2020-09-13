@@ -1,6 +1,11 @@
 <template>
   <div class="about">
     <h1>Bookings page</h1>
+    <BookedCard />
+    <BookedCard />
+    <BookedCard />
+    <BookedCard />
+    <BookedCard />
   </div>
 </template>
 <script>
@@ -23,7 +28,7 @@ export default {
   },
   watch: {
     // whenever question changes, this function will run
-    bookings: function() {
+    bookings: function () {
       this.getBookingsActions();
       this.bookingList = this.bookings;
     },

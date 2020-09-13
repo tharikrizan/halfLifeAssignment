@@ -10,9 +10,9 @@
     </v-app-bar>
 
     <v-container>
-      <v-row justify="center">
-        <v-col cols="6" md="4" sm="12">
-          <v-main class="flex align-center ">
+      <v-row justify="start" wrap>
+        <v-col cols="4" md="6" sm="12">
+          <v-main>
             <router-view />
           </v-main>
         </v-col>
@@ -35,15 +35,9 @@ export default {
   computed: {
     ...mapState(["bookings"]),
   },
-  watch: {
-    // whenever question changes, this function will run
-    bookings: function() {
-      this.getBookingsActions();
-      this.bookingList = this.bookings;
-    },
-  },
+
   created() {
-    this.getBookingsActions();
+    this.getBookingsAction();
     this.bookingList = this.bookings;
   },
 };

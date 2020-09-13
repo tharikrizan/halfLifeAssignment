@@ -1,17 +1,18 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
+import http from "../http-common";
 
 Vue.use(Vuex);
 
-const API = process.env.LOCAL_BASE_SERVER_URL + "/api/bookings";
+//const API = process.env.LOCAL_BASE_SERVER_URL;
 export default new Vuex.Store({
   state: {
     bookings: [],
   },
   mutations: {
     addBookingMutation: async (state, payload) => {
-      const response = await axios.post(`${API}`, {
+      const response = await http.post(`/bookings/`, {
         ...payload,
       });
 
@@ -23,7 +24,8 @@ export default new Vuex.Store({
       }
     },
     getBookingsMutation: async (state) => {
-      const response = await axios.get(`${API}`);
+      const response = await http.get(`/bookings/`);
+      console.log(response);
 
       if (response.data.success) {
         console.log(response.data.data);

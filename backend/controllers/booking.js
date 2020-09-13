@@ -30,35 +30,42 @@ exports.getBookings = async (req, res, next) => {
 exports.addBooking = async (req, res, next) => {
   try {
     //check if booking possible for today
+    console.log(req.body);
     const bookings = await Booking.find();
+    //console.log("bookings", bookings);
     if (bookings.length > 10) {
       return res.status(100).json({
         success: false,
         message: "Bookings Full",
       });
     }
-    //if heavy vehicle , check availabilty , and assign particular substation accordingly
+    //check vehicle type , check availabilty , and assign particular substation accordingly
     // I added 10 substations manually to the database
     let subStation = "";
-    if (req.body.vehicleType === "heavy") {
-      subStation = await SubStations.findOne({
-        assigned: false,
-        type: "heavy",
-      });
-    } else {
-      subStation = await SubStations.findOne({
-        assigned: false,
-        type: "light",
+
+    subStation = await SubStations.findOne({
+      assigned: false,
+      type: req.body.vehicleType,
+    });
+
+    if (subStation == null) {
+      return res.status(100).json({
+        success: false,
+        message: "Heavy vehicle subStations are full",
       });
     }
-
     //assign available staff
     // I added 10 staff members manually to the database
 
     const staff = await Staff.findOne({ assigned: false });
 
     let booking = new Booking({
-      ...req.body,
+      custName: req.body.custName,
+      custEmail: req.body.custEmail,
+      vehicleMake: req.body.vehicleMake,
+      vehicleModel: req.body.vehicleModel,
+      vehicleType: req.body.vehicleType,
+
       assignedSubStation: subStation.name,
       assignedStaff: staff.name,
     });
