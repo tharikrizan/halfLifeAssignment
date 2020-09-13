@@ -14,20 +14,34 @@ const app = express();
 //middlewares
 
 app.use(bodyParser.json());
-app.use(cors());
 
 const port = process.env.PORT || 5001;
 
 //handling cors error
-app.use((req, res, next) => {
+let enableCORS = function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
-  if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,PATCH,DELETE");
-    res.status(200).json({});
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, token, Content-Length, X-Requested-With, *"
+  );
+  if ("OPTIONS" === req.method) {
+    res.sendStatus(200);
+  } else {
+    next();
   }
+};
+app.all("/*", function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, token, Content-Length, X-Requested-With, *"
+  );
   next();
 });
+app.use(enableCORS);
+
 //connect to mongoDB
 mongoose
   .connect(process.env.MONGO_DB_URL, {
